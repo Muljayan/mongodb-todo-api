@@ -1,7 +1,7 @@
-const _ =require('lodash');
-let express = require('express');
-let bodyParser = require('body-parser');
-let {ObjectID} = require('mongodb');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
+const  {ObjectID} = require('mongodb');
 
 let {mongoose} = require('./db/mongoose.js')
 let {Todo} = require('./models/todo');
@@ -14,9 +14,11 @@ app.use(bodyParser.json())
 
 //Setup a route
 app.post('/todos',(req,res)=>{
+    console.log('Sending:',req.body);
     let todo = new Todo({
         text:req.body.text
     });
+    //save to db
     todo.save().then((doc)=>{
         res.send(doc);
     },(err)=>{
@@ -32,8 +34,8 @@ app.get('/todos',(req,res)=>{
     })
 })
 
-//GEt /todos/123456
-
+//GET /todos/123456
+    //:id is a url parameter
 app.get('/todos/:id',(req,res)=>{
     let id = req.params.id;
 
@@ -75,21 +77,17 @@ app.patch('/todos/:id',(req,res)=>{
     let body = _.pick(req.body,['text','completed']);//User can only update these
 
 
-
-
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
       }
-
-    
-
+  
     if(_.isBoolean(body.completed)&&body.completed){
         body.completedAt = new Date().getTime();
     }else{
         body.completed = false;
         body.completedAt = null;
     }
-    //Query to update db
+    //Query to update db //{new:true} is similar to return original of mongodb
     Todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((todo)=>{
         if(!todo){
             return res.status(404).send();

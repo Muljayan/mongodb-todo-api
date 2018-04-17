@@ -11,6 +11,7 @@ const {MongoClient,ObjectID} = require('mongodb');
 
 MongoClient.connect('mongodb://localhost:27017',(err,client)=>{
     let db = client.db('TodoApp');//mongo v3 and upwards
+                                //above creates the TodoApp db
     if(err){
         return console.log('Unable to connect to MongoDB Server');
       
@@ -19,19 +20,19 @@ MongoClient.connect('mongodb://localhost:27017',(err,client)=>{
 
 
 
-    //Adding data to todos colleciton
-        //Insert one adds a document to collection
-    // db.collection('Todos').insertOne({
-    //     text:'Something to do',
-    //     completed:false
-    // },(err,result)=>{
-    //     if(err){
-    //         return console.log('Unable to insert todo',err)
-    //     }
-    //     console.log(JSON.stringify(result.ops,undefined,2))
-    //     //ops returns all documetns inserted
+    // Adding data to todos colleciton
+    //     Insert one adds a document to collection
+    db.collection('Todos').insertOne({
+        text:'Something to do',
+        completed:false
+    },(err,result)=>{
+        if(err){
+            return console.log('Unable to insert todo',err)
+        }
+        console.log(JSON.stringify(result.ops,undefined,2))
+        //ops returns all documetns inserted
 
-    // });
+    });
 
 
     // db.collection('Users').insertOne({

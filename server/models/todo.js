@@ -1,4 +1,4 @@
-let mongoose = require('mongoose')
+const mongoose = require('mongoose')
 //Todo modal
 let Todo = mongoose.model('Todo',{
     text:{

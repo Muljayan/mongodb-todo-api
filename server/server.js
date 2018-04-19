@@ -6,6 +6,8 @@ const  {ObjectID} = require('mongodb');
 let {mongoose} = require('./db/mongoose.js')
 let {Todo} = require('./models/todo');
 let{User}=require('./models/user');
+let {authenticate} = require('./middleware/authenticate');
+
 
 let app = express();
 
@@ -103,9 +105,7 @@ app.post('/users', (req, res) => {
     let body = _.pick(req.body, ['email', 'password']);
     let user = new User(body);
     
-    //model method
-    
-    // instance method
+
 
     user.save().then(() => {
         return user.generateAuthToken();
@@ -113,11 +113,41 @@ app.post('/users', (req, res) => {
     }).then((token)=>{
         res.header('x-auth',token).send(user);//x-auth is custom header
     }).catch((e) => {
+        console.log(e);
       res.status(400).send(e);
     })
   });
 
+// let authenticate = (req,res,next)=>{
+//     let token = req.header('x-auth');
 
+//     User.findByToken(token).then((user)=>{
+//         if(!user){
+//             return Promise.reject();
+//         }
+//         req.user = user;
+//         req.token = token;
+//         next();
+//     }).catch((e)=>{
+//         res.status(401).send();
+//     });
+// }
+  
+app.get('/users/me',authenticate,(req,res)=>{
+    // let token = req.header('x-auth');
+
+    // User.findByToken(token).then((user)=>{
+    //     if(!user){
+    //         // return Promise.reject();
+    //     }
+    //     res.send(user);
+    // }).catch((e)=>{
+    //     // res.status(401).send();
+    // });
+    res.send(req.user);
+
+})
+ 
 app.listen(3000,()=>{
     console.log('Started on port 3000')
 });
